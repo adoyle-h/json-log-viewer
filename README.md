@@ -6,9 +6,9 @@
 
 ![screenshot](screenshot.png)
 
-**json-log-viewer** is a feature intensive viewer and analyze tool for JSON logs created by libraries like [https://github.com/winstonjs/winston](winston).
+**json-log-viewer** is a feature intensive viewer and analyze tool for JSON logs.
 
-Features:
+## Features
 
 - completely operated by hotkeys
 - powerful command line arguments
@@ -16,7 +16,23 @@ Features:
 - filter by any field or metadata
 - search
 
-Hotkeys:
+## Install
+
+```bash
+npm install -g @adoyle.me/json-log-viewer
+```
+
+## Usage
+
+```bash
+jv log-file
+```
+
+```bash
+cat log-file | jv
+```
+
+### Hotkeys
 
 - `arrows` and `page up/down` to move
 - `/` to search
@@ -28,18 +44,6 @@ Hotkeys:
 - `0` to go to first line
 - `$` to go to last line
 - `q` to quit
-
-## Install
-
-```bash
-npm install --global json-log-viewer
-```
-
-## Usage
-
-```bash
-jv application.log.2017-01-01 --sort -timestamp
-```
 
 ### Configuration
 

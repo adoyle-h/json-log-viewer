@@ -1,0 +1,17 @@
+root: true
+
+extends:
+  - adoyle-style/node/recommended
+
+# globals:
+#   Atomics: readonly
+#   SharedArrayBuffer: readonly
+
+overrides:
+  - files:
+      - '**/*.test.js'
+      - '**/__mocks__/*.js'
+    rules:
+      quotes: off
+    globals:
+      DefinTests: readonly
