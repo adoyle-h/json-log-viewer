@@ -39,15 +39,117 @@ class LogDetails extends BaseWidget {
     this.json = false;
   }
 
+  moveUp() {
+    const {el} = this;
+    el.scroll(-1);
+    this.screen.render();
+  }
+
+  moveDown() {
+    const {el} = this;
+    el.scroll(1);
+    this.screen.render();
+  }
+
+  pageDown() {
+    const {el} = this;
+    el.scroll(el.getScrollHeight());
+    this.screen.render();
+  }
+
+  pageUp() {
+    const {el} = this;
+    el.scroll(-el.getScrollHeight());
+    this.screen.render();
+  }
+
+  pageHalfDown() {
+    const {el} = this;
+    el.scroll(parseInt(el.getScrollHeight()/2));
+    this.screen.render();
+  }
+
+  pageHalfUp() {
+    const {el} = this;
+    el.scroll(-parseInt(el.getScrollHeight()/2));
+    this.screen.render();
+  }
+
+  moveToLine(num) {
+    this.row = num;
+    this.initialRow = num;
+    this.renderLines();
+  }
+
+  lastPage() {
+    this.row = this.lastRow;
+    this.initialRow = this.row - this.pageHeight;
+    this.renderLines();
+  }
+
   handleKeyPress(ch, key) {
-    if (key.name === 'enter' || key.name === 'escape') {
+    if (ch === 'q' || key.name === 'enter' || key.name === 'escape') {
       this.log('detach');
       this.el.detach();
       this.detach();
       this.screen.render();
       return;
     }
-    if (key.name === 'j') {
+
+    if (ch === 'j' || key.name === 'down') {
+      this.moveDown();
+      return;
+    }
+    if (ch === 'k' || key.name === 'up') {
+      this.moveUp();
+      return;
+    }
+
+    if (key.ctrl) {
+      if (key.name === 'd') {
+        this.pageHalfDown();
+        return;
+      }
+      if (key.name === 'u') {
+        this.pageHalfUp();
+        return;
+      }
+      if (key.name === 'f') {
+        this.pageDown();
+        return;
+      }
+      if (key.name === 'b') {
+        this.pageUp();
+        return;
+      }
+    }
+    if (key.name === 'pagedown') {
+      this.pageDown();
+      return;
+    }
+    if (key.name === 'pageup') {
+      this.pageUp();
+      return;
+    }
+
+    if (ch === 'g') {
+      if (this._doubleG) {
+        this._doubleG = false;
+        this.moveToLine(0);
+      } else {
+        this._doubleG = true;
+        setTimeout(() => {
+          this._doubleG = false;
+        }, 1000);
+      }
+      return;
+    }
+    if (ch === 'G') {
+      this.lastPage();
+      return;
+    }
+
+    if (key.name === 'tab') {
       this.json = !this.json;
       this.update();
     }

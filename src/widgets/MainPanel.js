@@ -112,11 +112,11 @@ class MainPanel extends BaseWidget {
   handleKeyPress(ch, key) {
     this.log('key', ch || (key && key.name));
 
-    if (key.name === 'down') {
+    if (ch === 'j' || key.name === 'down') {
       this.moveDown();
       return;
     }
-    if (key.name === 'up') {
+    if (ch === 'k' || key.name === 'up') {
       this.moveUp();
       return;
     }
@@ -125,25 +125,45 @@ class MainPanel extends BaseWidget {
       this.update();
       return;
     }
+
+    if (key.ctrl) {
+      if (key.name === 'd') {
+        this.pageHalfDown();
+        return;
+      }
+      if (key.name === 'u') {
+        this.pageHalfUp();
+        return;
+      }
+      if (key.name === 'f') {
+        this.pageDown();
+        return;
+      }
+      if (key.name === 'b') {
+        this.pageUp();
+        return;
+      }
+      if (key.name === 'g') {
+        this.openGoToLine();
+        return;
+      }
+    }
+
     if (key.name === 'pagedown') {
       this.pageDown();
       return;
     }
     if (key.name === 'pageup') {
-      this.log('pageup triggering...');
       this.pageUp();
       return;
     }
+
     if (key.name === 'enter') {
       this.displayDetails();
       return;
     }
     if (ch === '0') {
       this.firstPage();
-      return;
-    }
-    if (ch === '$') {
-      this.lastPage();
       return;
     }
     if (ch === '/') {
@@ -162,10 +182,24 @@ class MainPanel extends BaseWidget {
       this.openLevelFilter();
       return;
     }
-    if (ch === 'g') {
-      this.openGoToLine();
+
+    if (ch === 'G') {
+      this.lastPage();
       return;
     }
+    if (ch === 'g') {
+      if (this._doubleG) {
+        this._doubleG = false;
+        this.moveToLine(0);
+      } else {
+        this._doubleG = true;
+        setTimeout(() => {
+          this._doubleG = false;
+        }, 1000);
+      }
+      return;
+    }
+
     if (ch === 's') {
       this.openSort();
       return;
@@ -181,16 +215,16 @@ class MainPanel extends BaseWidget {
       process.exit(0);
       return;
     }
-    if (ch === 'A') {
+    if (ch === 'H') {
       this.moveToFirstViewportLine();
       return;
     }
-    if (ch === 'G') {
-      this.moveToLastViewportLine();
+    if (ch === 'M') {
+      this.moveToCenterViewportLine();
       return;
     }
-    if (ch === 'C') {
-      this.moveToCenterViewportLine();
+    if (ch === 'L') {
+      this.moveToLastViewportLine();
       return;
     }
   }
@@ -466,10 +500,31 @@ class MainPanel extends BaseWidget {
   pageUp() {
     const relativeRow = this.relativeRow;
     if (this.row - this.pageHeight < 0) {
-      return;
+      this.row = 0;
+      this.initialRow = 0;
+    } else {
+      this.row = Math.max(0, this.row - this.pageHeight);
+      this.initialRow = Math.max(0, this.row - relativeRow);
     }
-    this.row = Math.max(0, this.row - this.pageHeight);
-    this.initialRow = Math.max(0, this.row - relativeRow);
+    this.renderLines();
+  }
+
+  pageHalfDown() {
+    const relativeRow = this.relativeRow;
+    this.row = Math.min(this.lastRow, this.row + parseInt(this.pageHeight/2));
+    this.initialRow = this.row - relativeRow;
+    this.renderLines();
+  }
+
+  pageHalfUp() {
+    const relativeRow = this.relativeRow;
+    if (this.row - this.pageHeight < 0) {
+      this.row = 0;
+      this.initialRow = 0;
+    } else {
+      this.row = Math.max(0, this.row - parseInt(this.pageHeight/2));
+      this.initialRow = Math.max(0, this.row - relativeRow);
+    }
     this.renderLines();
   }
 
